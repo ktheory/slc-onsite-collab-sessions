@@ -1,0 +1,1143 @@
+<title>On-Site Breakout Board</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+  :root {
+    --paper:      #f3f5f4;
+    --surface:    #ffffff;
+    --surface-2:  #eaeeed;
+    --ink:        #16201e;
+    --ink-2:      #566764;
+    --ink-3:      #7d8f8b;
+    --line:       #dbe3e1;
+    --line-2:     #c4d0cd;
+    --accent:     #1c6b63;
+    --accent-ink: #0f4a44;
+    --accent-soft:#e1edeb;
+    --warn:       #96491a;
+    --warn-soft:  #f8eade;
+    --warn-line:  #e7c9ae;
+    --shadow:     0 1px 2px rgba(22,32,30,.06), 0 4px 14px rgba(22,32,30,.05);
+    --radius:     10px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #0f1514;
+      --surface:    #171f1e;
+      --surface-2:  #202a29;
+      --ink:        #e7edeb;
+      --ink-2:      #9aaca8;
+      --ink-3:      #7d8f8b;
+      --line:       #283432;
+      --line-2:     #374442;
+      --accent:     #6ac6ba;
+      --accent-ink: #9fdcd3;
+      --accent-soft:#17302d;
+      --warn:       #e0a570;
+      --warn-soft:  #2b2018;
+      --warn-line:  #4a3a2a;
+      --shadow:     0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.28);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:      #0f1514;
+    --surface:    #171f1e;
+    --surface-2:  #202a29;
+    --ink:        #e7edeb;
+    --ink-2:      #9aaca8;
+    --ink-3:      #7d8f8b;
+    --line:       #283432;
+    --line-2:     #374442;
+    --accent:     #6ac6ba;
+    --accent-ink: #9fdcd3;
+    --accent-soft:#17302d;
+    --warn:       #e0a570;
+    --warn-soft:  #2b2018;
+    --warn-line:  #4a3a2a;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.28);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { background: var(--paper); }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 0 72px;
+  }
+
+  /* ---------- header ---------- */
+
+  .masthead {
+    padding-block: 34px 18px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px 24px;
+  }
+  h1 {
+    font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: clamp(30px, 6vw, 42px);
+    line-height: 1.04;
+    letter-spacing: -.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .kicker {
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 6px;
+  }
+
+  .viewswitch {
+    display: inline-flex;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .viewswitch button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 16px;
+    min-height: 34px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .viewswitch button[aria-pressed="true"] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+  }
+
+  /* ---------- summary ---------- */
+
+  .summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 14px;
+    padding-block: 14px 4px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .summary b {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .summary .sep { color: var(--line-2); }
+  .linkish {
+    appearance: none;
+    border: 0;
+    background: none;
+    padding: 0;
+    font: inherit;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  .notice {
+    margin-top: 14px;
+    padding: 11px 14px;
+    border-radius: var(--radius);
+    font-size: 13.5px;
+    background: var(--warn-soft);
+    border: 1px solid var(--warn-line);
+    color: var(--warn);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  .notice.quiet {
+    background: var(--accent-soft);
+    border-color: transparent;
+    color: var(--accent-ink);
+  }
+  .notice .linkish { color: inherit; }
+
+  /* ---------- slot sections ---------- */
+
+  .slot { padding-block: 26px 4px; border-top: 1px solid var(--line); }
+  .slot:first-of-type { border-top: 0; }
+
+  .slot-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 14px;
+    margin-bottom: 14px;
+  }
+  .slot-time {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 17px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.01em;
+  }
+  .slot-day {
+    font-size: 13px;
+    color: var(--ink-3);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .slot-head .spacer { flex: 1 1 40px; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+    align-items: start;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    box-shadow: var(--shadow);
+  }
+  .card.is-example { border-style: dashed; border-color: var(--line-2); box-shadow: none; }
+  .card.picking { grid-column: 1 / -1; }
+  .card.dragging { opacity: .45; }
+
+  .card-top { display: flex; align-items: center; gap: 8px; margin-bottom: -4px; }
+  .grip {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: var(--ink-3);
+    padding: 4px 2px;
+    margin-left: -3px;
+    cursor: grab;
+    line-height: 0;
+  }
+  .grip:hover { color: var(--accent); border-color: var(--line); }
+  .grip:active { cursor: grabbing; }
+  .card-top .tag { margin-left: auto; }
+
+  .slot.droptarget .cards,
+  .slot.droptarget .empty-note {
+    outline: 2px dashed var(--accent);
+    outline-offset: 8px;
+    border-radius: var(--radius);
+  }
+  .slot.droptarget .slot-time { color: var(--accent); }
+
+  .topic {
+    appearance: none;
+    width: 100%;
+    border: 0;
+    border-bottom: 1.5px solid transparent;
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    padding: 2px 0 5px;
+    border-radius: 0;
+    resize: none;
+    overflow: hidden;
+    display: block;
+    field-sizing: content;
+  }
+  .topic::placeholder { color: var(--ink-3); font-weight: 400; }
+  .topic:hover { border-bottom-color: var(--line); }
+  .topic:focus { outline: none; border-bottom-color: var(--accent); }
+
+  .tag {
+    align-self: flex-start;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 13px;
+    padding: 4px 6px 4px 11px;
+    min-height: 30px;
+    cursor: pointer;
+  }
+  .chip .x { font-size: 15px; line-height: 1; opacity: .6; padding: 0 3px; }
+  .chip:hover { border-color: var(--accent); }
+  .chip:hover .x { opacity: 1; }
+  .chip.dupe { background: var(--warn-soft); color: var(--warn); }
+
+  .empty-note { font-size: 13.5px; color: var(--ink-3); font-style: italic; }
+
+  /* ---------- people picker ---------- */
+
+  .picker {
+    border-top: 1px solid var(--line);
+    padding-top: 11px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: 5px;
+  }
+  .pick {
+    appearance: none;
+    text-align: left;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+    padding: 7px 9px;
+    min-height: 44px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    line-height: 1.25;
+  }
+  .pick:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
+  .pick[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--surface);
+  }
+  .pick:disabled { cursor: not-allowed; color: var(--ink-3); background: var(--surface-2); border-style: dashed; }
+  .pick .where {
+    font-size: 11px;
+    color: var(--ink-3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ---------- buttons ---------- */
+
+  .btn {
+    appearance: none;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 7px;
+    padding: 8px 13px;
+    min-height: 36px;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line-2);
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  .btn.primary:hover { background: var(--accent-ink); border-color: var(--accent-ink); color: var(--surface); }
+  .btn.ghost { background: transparent; border-color: transparent; color: var(--ink-2); padding-inline: 8px; }
+  .btn.ghost:hover { color: var(--warn); border-color: var(--warn-line); }
+  .btn.danger { background: var(--warn); border-color: var(--warn); color: var(--surface); }
+
+  .card-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-top: 2px;
+  }
+  .card-foot .count {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    margin-right: auto;
+  }
+
+  .slotpick {
+    appearance: none;
+    font: inherit;
+    font-size: 12.5px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    color: var(--ink-2);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 7px 9px;
+    min-height: 36px;
+    cursor: pointer;
+  }
+  .slotpick:hover { border-color: var(--accent); color: var(--accent); }
+
+  .free {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--ink-3);
+    line-height: 1.6;
+  }
+  .free strong { color: var(--ink-2); font-weight: 500; }
+
+  /* ---------- by-person grid ---------- */
+
+  .gridwrap { overflow-x: auto; margin-top: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  table.grid { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 13.5px; }
+  table.grid th, table.grid td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.grid thead th {
+    position: sticky; top: 0; z-index: 2;
+    background: var(--surface-2);
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11.5px; font-weight: 600; letter-spacing: .04em;
+    white-space: nowrap;
+  }
+  table.grid tbody th {
+    position: sticky; left: 0; z-index: 1;
+    background: var(--surface);
+    font-weight: 500;
+    white-space: nowrap;
+    border-right: 1px solid var(--line);
+  }
+  table.grid tr:last-child th, table.grid tr:last-child td { border-bottom: 0; }
+  td.filled { color: var(--ink); }
+  td.blank { color: var(--ink-3); }
+  tr.idle th, tr.idle td.blank { color: var(--warn); }
+  td .dupe-note { display: block; font-size: 11.5px; color: var(--warn); }
+
+  /* ---------- misc ---------- */
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    box-shadow: var(--shadow);
+    z-index: 20;
+    max-width: calc(100vw - 32px);
+  }
+
+  .footnote {
+    margin-top: 34px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-3);
+    line-height: 1.6;
+  }
+
+  :where(button, input):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .vh {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  @media (max-width: 520px) {
+    .masthead { padding-block: 24px 14px; }
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <div>
+      <p class="kicker">Team on-site</p>
+      <h1>Breakout sessions</h1>
+    </div>
+    <div class="viewswitch" role="group" aria-label="View">
+      <button type="button" id="view-slots" data-act="view" data-view="slots" aria-pressed="true">By slot</button>
+      <button type="button" id="view-people" data-act="view" data-view="people" aria-pressed="false">By person</button>
+    </div>
+  </header>
+
+  <div id="status"></div>
+  <main id="app"><p class="empty-note" style="padding-block:28px">Loading the schedule…</p></main>
+
+  <p class="footnote">
+    Drag a session by the handle in its corner to move it to another slot, or pick the slot
+    from the menu at the bottom of the card. Everyone with the link can add sessions and move
+    people around, and changes show up for whoever else has the page open. Nobody can be in
+    two sessions in the same slot — the board greys them out and tells you where they already
+    are, and anyone who would clash comes off a session when you move it.
+  </p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- fixed roster and schedule ---------------- */
+
+  var PEOPLE = [
+    { id: "aaron.suggs",      name: "Aaron Suggs",      short: "Aaron" },
+    { id: "ahmad",            name: "Ahmad",            short: "Ahmad" },
+    { id: "ciara.montes",     name: "Ciara Montes",     short: "Ciara" },
+    { id: "dnehring",         name: "Daniel Nehring",   short: "Daniel" },
+    { id: "emily.stupar",     name: "Emily Stupar",     short: "Emily" },
+    { id: "jackson.howe",     name: "Jackson Howe",     short: "Jackson" },
+    { id: "jenny.thai",       name: "Jenny Thai",       short: "Jenny" },
+    { id: "kqiu",             name: "kqiu",             short: "kqiu" },
+    { id: "kyle.cayemittes",  name: "Kyle Cayemittes",  short: "Kyle" },
+    { id: "michelle.trame",   name: "Michelle Trame",   short: "Michelle" },
+    { id: "ryan.dontas",      name: "Ryan Dontas",      short: "Ryan" },
+    { id: "terran.jendro",    name: "Terran Jendro",    short: "Terran" }
+  ];
+
+  var SLOTS = [
+    { id: "s1", day: "Tuesday",   time: "2:15 PM",  cell: "Tue 2:15" },
+    { id: "s2", day: "Wednesday", time: "9:45 AM",  cell: "Wed 9:45" },
+    { id: "s3", day: "Wednesday", time: "2:00 PM",  cell: "Wed 2:00" },
+    { id: "s4", day: "Wednesday", time: "3:30 PM",  cell: "Wed 3:30" },
+    { id: "s5", day: "Thursday",  time: "1:00 PM",  cell: "Thu 1:00" }
+  ];
+
+  var PERSON = {};
+  PEOPLE.forEach(function (p) { PERSON[p.id] = p; });
+  var SLOT = {};
+  SLOTS.forEach(function (s) { SLOT[s.id] = s; });
+
+  /* ---------------- state ---------------- */
+
+  var db = null;
+  var mode = "connecting";          // connecting | shared | local
+  var sessions = [];                // [{id, topic, slot, people[], example, createdAt}]
+  var view = "slots";
+  var openPicker = null;
+  var pendingDelete = null;
+  var drafts = {};                  // sessionId -> in-flight topic text
+  var saveTimers = {};
+  var toastTimer = null;
+
+  var appEl = document.getElementById("app");
+  var statusEl = document.getElementById("status");
+
+  /* ---------------- helpers ---------------- */
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function newId() {
+    return "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  function byId(id) {
+    for (var i = 0; i < sessions.length; i++) if (sessions[i].id === id) return sessions[i];
+    return null;
+  }
+
+  function sortSessions(list) {
+    return list.slice().sort(function (a, b) {
+      var sa = SLOTS.findIndex(function (s) { return s.id === a.slot; });
+      var sb = SLOTS.findIndex(function (s) { return s.id === b.slot; });
+      if (sa !== sb) return sa - sb;
+      if (a.createdAt !== b.createdAt) return a.createdAt < b.createdAt ? -1 : 1;
+      return a.id < b.id ? -1 : 1;
+    });
+  }
+
+  function forSlot(slotId) {
+    return sessions.filter(function (s) { return s.slot === slotId; });
+  }
+
+  function topicOf(s) {
+    var t = (drafts[s.id] != null ? drafts[s.id] : s.topic) || "";
+    return t.trim();
+  }
+
+  function labelOf(s) {
+    return topicOf(s) || "Untitled session";
+  }
+
+  /** person id -> slot id -> [sessions they are in during that slot] */
+  function buildBookings() {
+    var map = {};
+    sessions.forEach(function (s) {
+      (s.people || []).forEach(function (pid) {
+        if (!PERSON[pid]) return;
+        if (!map[pid]) map[pid] = {};
+        if (!map[pid][s.slot]) map[pid][s.slot] = [];
+        map[pid][s.slot].push(s);
+      });
+    });
+    return map;
+  }
+
+  /* Browsers without CSS `field-sizing` need the height set by hand. */
+  var NEEDS_AUTOSIZE = !(window.CSS && CSS.supports && CSS.supports("field-sizing", "content"));
+
+  function autosize(el) {
+    if (!NEEDS_AUTOSIZE || !el) return;
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  }
+
+  function autosizeAll() {
+    if (!NEEDS_AUTOSIZE) return;
+    var list = appEl.querySelectorAll("textarea.topic");
+    for (var i = 0; i < list.length; i++) autosize(list[i]);
+  }
+
+  function toast(msg) {
+    var old = document.querySelector(".toast");
+    if (old) old.remove();
+    var el = document.createElement("div");
+    el.className = "toast";
+    el.setAttribute("role", "status");
+    el.textContent = msg;
+    document.body.appendChild(el);
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.remove(); }, 3400);
+  }
+
+  /* ---------------- persistence ---------------- */
+
+  function localApply(id, patch, remove) {
+    var i = sessions.findIndex(function (s) { return s.id === id; });
+    if (remove) { if (i >= 0) sessions.splice(i, 1); return; }
+    if (i >= 0) sessions[i] = Object.assign({}, sessions[i], patch);
+    else sessions.push(Object.assign({ id: id, topic: "", slot: SLOTS[0].id, people: [], example: false, createdAt: new Date().toISOString() }, patch));
+    sessions = sortSessions(sessions);
+  }
+
+  function failed(e) {
+    var code = e && e.code ? e.code : "";
+    if (code === "revoked" || code === "not_granted") {
+      db = null;
+      mode = "local";
+      toast("You can look but not change this board.");
+    } else if (code === "quota_exceeded") {
+      toast("This board is full. Delete a session to add another.");
+    } else if (code === "resource_exhausted") {
+      toast("Too many changes at once. Give it a second and try again.");
+    } else {
+      toast("That change didn't save. Try again.");
+    }
+    render();
+  }
+
+  function createSession(body) {
+    if (!db) { localApply(body.id, body); render(); return; }
+    db.collection("sessions").doc(body.id).set({
+      topic: body.topic,
+      slot: body.slot,
+      people: body.people,
+      example: !!body.example,
+      createdAt: body.createdAt
+    }).catch(failed);
+  }
+
+  function patchSession(id, patch, redraw) {
+    localApply(id, patch);           // optimistic; the store echoes the truth back
+    if (db) db.collection("sessions").doc(id).update(patch).catch(failed);
+    if (redraw) render();
+  }
+
+  function dropSession(id) {
+    localApply(id, null, true);
+    if (db) db.collection("sessions").doc(id).delete().catch(failed);
+    render();
+  }
+
+  /* ---------------- actions ---------------- */
+
+  function addSession(slotId) {
+    var id = newId();
+    var body = { id: id, topic: "", slot: slotId, people: [], example: false, createdAt: new Date().toISOString() };
+    localApply(id, body);            // show it at once; the store echoes it back
+    if (db) createSession(body);
+    openPicker = id;
+    pendingDelete = null;
+    render();
+    var input = document.getElementById("topic-" + id);
+    if (input) input.focus();
+  }
+
+  function togglePerson(sid, pid) {
+    var s = byId(sid);
+    if (!s) return;
+    var people = (s.people || []).slice();
+    var at = people.indexOf(pid);
+    if (at >= 0) {
+      people.splice(at, 1);
+    } else {
+      var clash = forSlot(s.slot).filter(function (o) {
+        return o.id !== sid && (o.people || []).indexOf(pid) >= 0;
+      });
+      if (clash.length) {
+        toast(PERSON[pid].short + " is already in “" + labelOf(clash[0]) + "” in this slot.");
+        return;
+      }
+      people.push(pid);
+    }
+    people.sort(function (a, b) {
+      return PEOPLE.findIndex(function (p) { return p.id === a; }) - PEOPLE.findIndex(function (p) { return p.id === b; });
+    });
+    patchSession(sid, { people: people }, true);
+  }
+
+  /**
+   * Move a session to another slot. Anyone in it who is already busy at the
+   * destination comes off the session, so the one-per-slot rule always holds.
+   */
+  function moveSession(sid, slotId) {
+    var s = byId(sid);
+    if (!s || !SLOT[slotId]) { render(); return; }
+    if (s.slot === slotId) { render(); return; }
+
+    var busy = {};
+    forSlot(slotId).forEach(function (o) {
+      if (o.id === sid) return;
+      (o.people || []).forEach(function (pid) { busy[pid] = o; });
+    });
+
+    var keep = [], bumped = [];
+    (s.people || []).forEach(function (pid) {
+      if (busy[pid]) bumped.push(pid); else keep.push(pid);
+    });
+
+    var patch = { slot: slotId };
+    if (bumped.length) patch.people = keep;
+    patchSession(sid, patch, true);
+
+    if (bumped.length) {
+      var who = bumped.map(function (pid) { return PERSON[pid].short; }).join(", ");
+      toast(who + (bumped.length === 1 ? " is" : " are") + " already booked at " +
+            SLOT[slotId].cell + ", so they came off this session.");
+    }
+  }
+
+  function saveTopic(sid) {
+    clearTimeout(saveTimers[sid]);
+    var s = byId(sid);
+    var text = drafts[sid];
+    if (s && text != null && text !== s.topic) patchSession(sid, { topic: text }, false);
+  }
+
+  function queueTopicSave(sid) {
+    clearTimeout(saveTimers[sid]);
+    saveTimers[sid] = setTimeout(function () { saveTopic(sid); }, 550);
+  }
+
+  function clearExamples() {
+    sessions.filter(function (s) { return s.example; }).forEach(function (s) { dropSession(s.id); });
+  }
+
+  /* ---------------- rendering ---------------- */
+
+  function renderStatus() {
+    var bits = "";
+    if (mode === "local") {
+      bits += '<div class="notice">Changes here are not being saved. Reopen the board from its link to get the shared version.</div>';
+    }
+    if (sessions.some(function (s) { return s.example; })) {
+      bits += '<div class="notice quiet">Some sessions are placeholders so you can see how the board works. ' +
+              '<button type="button" class="linkish" data-act="clear-examples">Clear the examples</button></div>';
+    }
+    statusEl.innerHTML = bits;
+  }
+
+  function renderSummary(bookings) {
+    var idle = PEOPLE.filter(function (p) { return !bookings[p.id]; });
+    var dupes = PEOPLE.filter(function (p) {
+      var b = bookings[p.id] || {};
+      return Object.keys(b).some(function (sl) { return b[sl].length > 1; });
+    });
+
+    var html = '<div class="summary">';
+    html += "<span><b>" + sessions.length + "</b> session" + (sessions.length === 1 ? "" : "s") + "</span>";
+    html += '<span class="sep">/</span>';
+    html += "<span><b>" + (PEOPLE.length - idle.length) + "</b> of <b>" + PEOPLE.length + "</b> people booked</span>";
+    if (idle.length) {
+      html += '<span class="sep">/</span><span><button type="button" class="linkish" data-act="view" data-view="people">' +
+              "<b>" + idle.length + "</b> with nothing yet</button></span>";
+    }
+    html += "</div>";
+
+    if (dupes.length) {
+      html += '<div class="notice">' + esc(dupes.map(function (p) { return p.short; }).join(", ")) +
+              " ended up in two sessions in the same slot, probably from two people editing at once. Remove one." +
+              "</div>";
+    }
+    return html;
+  }
+
+  function renderCard(s, bookings) {
+    var people = (s.people || []).filter(function (pid) { return PERSON[pid]; });
+    var isOpen = openPicker === s.id;
+    var h = '<article class="card' + (s.example ? " is-example" : "") + (isOpen ? " picking" : "") +
+            '" data-card="' + esc(s.id) + '">';
+
+    h += '<div class="card-top">';
+    h += '<button type="button" class="grip" draggable="true" data-grip="1" data-sid="' + esc(s.id) +
+         '" title="Drag to another slot" aria-label="Drag “' + esc(labelOf(s)) + '” to another slot">' +
+         '<svg width="12" height="16" viewBox="0 0 12 16" aria-hidden="true" fill="currentColor">' +
+         '<circle cx="3" cy="3" r="1.5"/><circle cx="9" cy="3" r="1.5"/>' +
+         '<circle cx="3" cy="8" r="1.5"/><circle cx="9" cy="8" r="1.5"/>' +
+         '<circle cx="3" cy="13" r="1.5"/><circle cx="9" cy="13" r="1.5"/></svg></button>';
+    if (s.example) h += '<span class="tag">Example</span>';
+    h += "</div>";
+
+    h += '<label class="vh" for="topic-' + esc(s.id) + '">Session topic</label>';
+    h += '<textarea class="topic" id="topic-' + esc(s.id) + '" data-act="topic" data-sid="' + esc(s.id) +
+         '" rows="1" maxlength="120" placeholder="What\'s this one about?">' +
+         esc(drafts[s.id] != null ? drafts[s.id] : (s.topic || "")) + "</textarea>";
+
+    if (people.length) {
+      h += '<div class="chips">';
+      people.forEach(function (pid) {
+        var b = (bookings[pid] || {})[s.slot] || [];
+        var dupe = b.length > 1;
+        h += '<button type="button" class="chip' + (dupe ? " dupe" : "") + '" data-act="drop-person" data-sid="' +
+             esc(s.id) + '" data-pid="' + esc(pid) + '" title="Remove ' + esc(PERSON[pid].name) + '">' +
+             esc(PERSON[pid].short) + '<span class="x" aria-hidden="true">×</span>' +
+             '<span class="vh">Remove ' + esc(PERSON[pid].name) + '</span></button>';
+      });
+      h += "</div>";
+    } else {
+      h += '<p class="empty-note">Nobody in this one yet.</p>';
+    }
+
+    if (isOpen) {
+      h += '<div class="picker">';
+      PEOPLE.forEach(function (p) {
+        var inThis = people.indexOf(p.id) >= 0;
+        var elsewhere = forSlot(s.slot).filter(function (o) {
+          return o.id !== s.id && (o.people || []).indexOf(p.id) >= 0;
+        });
+        var busy = !inThis && elsewhere.length > 0;
+        h += '<button type="button" class="pick" data-act="toggle-person" data-sid="' + esc(s.id) +
+             '" data-pid="' + esc(p.id) + '" aria-pressed="' + (inThis ? "true" : "false") + '"' +
+             (busy ? " disabled" : "") + ' title="' + esc(p.name) + '">' +
+             "<span>" + esc(p.short) + "</span>" +
+             (busy ? '<span class="where">in “' + esc(labelOf(elsewhere[0])) + "”</span>" : "") +
+             "</button>";
+      });
+      h += "</div>";
+    }
+
+    h += '<div class="card-foot">';
+    h += '<span class="count">' + people.length + " attending</span>";
+    h += '<label class="vh" for="slot-' + esc(s.id) + '">Time slot</label>';
+    h += '<select class="slotpick" id="slot-' + esc(s.id) + '" data-act="move" data-sid="' + esc(s.id) + '">';
+    SLOTS.forEach(function (sl) {
+      h += '<option value="' + esc(sl.id) + '"' + (sl.id === s.slot ? " selected" : "") + ">" + esc(sl.cell) + "</option>";
+    });
+    h += "</select>";
+    h += '<button type="button" class="btn" data-act="toggle-picker" data-sid="' + esc(s.id) + '" aria-expanded="' +
+         (isOpen ? "true" : "false") + '">' + (isOpen ? "Done" : "Add people") + "</button>";
+    if (pendingDelete === s.id) {
+      h += '<button type="button" class="btn danger" data-act="confirm-delete" data-sid="' + esc(s.id) + '">Delete</button>';
+      h += '<button type="button" class="btn ghost" data-act="cancel-delete">Keep</button>';
+    } else {
+      h += '<button type="button" class="btn ghost" data-act="ask-delete" data-sid="' + esc(s.id) +
+           '" aria-label="Delete this session">Delete</button>';
+    }
+    h += "</div></article>";
+    return h;
+  }
+
+  function renderSlots(bookings) {
+    var h = "";
+    SLOTS.forEach(function (slot) {
+      var list = forSlot(slot.id);
+      h += '<section class="slot" data-dropslot="' + esc(slot.id) + '">';
+      h += '<div class="slot-head">';
+      h += '<span class="slot-time">' + esc(slot.time) + "</span>";
+      h += '<span class="slot-day">' + esc(slot.day) + "</span>";
+      h += '<span class="spacer"></span>';
+      h += '<button type="button" class="btn primary" data-act="add" data-slot="' + esc(slot.id) + '">Add session</button>';
+      h += "</div>";
+
+      if (list.length) {
+        h += '<div class="cards">' + list.map(function (s) { return renderCard(s, bookings); }).join("") + "</div>";
+      } else {
+        h += '<p class="empty-note">No sessions in this slot.</p>';
+      }
+
+      var free = PEOPLE.filter(function (p) { return !((bookings[p.id] || {})[slot.id] || []).length; });
+      if (free.length && list.length) {
+        h += '<p class="free"><strong>Free this slot:</strong> ' +
+             esc(free.map(function (p) { return p.short; }).join(", ")) + "</p>";
+      }
+      h += "</section>";
+    });
+    return h;
+  }
+
+  function renderPeople(bookings) {
+    var h = '<div class="gridwrap"><table class="grid"><thead><tr><th scope="col">Person</th>';
+    SLOTS.forEach(function (s) { h += '<th scope="col">' + esc(s.cell) + "</th>"; });
+    h += "</tr></thead><tbody>";
+
+    PEOPLE.forEach(function (p) {
+      var b = bookings[p.id] || {};
+      var idle = Object.keys(b).length === 0;
+      h += '<tr' + (idle ? ' class="idle"' : "") + '><th scope="row">' + esc(p.name) + "</th>";
+      SLOTS.forEach(function (slot) {
+        var here = b[slot.id] || [];
+        if (!here.length) {
+          h += '<td class="blank">—</td>';
+        } else {
+          h += '<td class="filled">' + esc(labelOf(here[0])) +
+               (here.length > 1 ? '<span class="dupe-note">also in “' + esc(labelOf(here[1])) + "”</span>" : "") +
+               "</td>";
+        }
+      });
+      h += "</tr>";
+    });
+
+    h += "</tbody></table></div>";
+    h += '<p class="free">Rows in amber have nothing on the schedule yet. Switch to <button type="button" class="linkish" data-act="view" data-view="slots">by slot</button> to put them somewhere.</p>';
+    return h;
+  }
+
+  function render() {
+    var active = document.activeElement;
+    var keepId = active && active.classList && active.classList.contains("topic") ? active.id : null;
+    var caret = keepId ? active.selectionStart : null;
+
+    var bookings = buildBookings();
+    renderStatus();
+
+    document.getElementById("view-slots").setAttribute("aria-pressed", view === "slots" ? "true" : "false");
+    document.getElementById("view-people").setAttribute("aria-pressed", view === "people" ? "true" : "false");
+
+    appEl.innerHTML = renderSummary(bookings) + (view === "slots" ? renderSlots(bookings) : renderPeople(bookings));
+    autosizeAll();
+
+    if (keepId) {
+      var back = document.getElementById(keepId);
+      if (back) {
+        back.focus();
+        try { back.setSelectionRange(caret, caret); } catch (e) { /* not selectable */ }
+      }
+    }
+  }
+
+  /* ---------------- events ---------------- */
+
+  document.addEventListener("click", function (ev) {
+    var el = ev.target.closest("[data-act]");
+    if (!el) return;
+    var act = el.getAttribute("data-act");
+    var sid = el.getAttribute("data-sid");
+    var pid = el.getAttribute("data-pid");
+
+    if (act === "view") {
+      view = el.getAttribute("data-view");
+      openPicker = null;
+      pendingDelete = null;
+      render();
+    } else if (act === "add") {
+      addSession(el.getAttribute("data-slot"));
+    } else if (act === "toggle-picker") {
+      openPicker = openPicker === sid ? null : sid;
+      pendingDelete = null;
+      render();
+    } else if (act === "toggle-person" || act === "drop-person") {
+      togglePerson(sid, pid);
+    } else if (act === "ask-delete") {
+      pendingDelete = sid;
+      render();
+    } else if (act === "cancel-delete") {
+      pendingDelete = null;
+      render();
+    } else if (act === "confirm-delete") {
+      pendingDelete = null;
+      if (openPicker === sid) openPicker = null;
+      delete drafts[sid];
+      dropSession(sid);
+    } else if (act === "clear-examples") {
+      clearExamples();
+    }
+  });
+
+  document.addEventListener("change", function (ev) {
+    var el = ev.target;
+    if (!el.matches || !el.matches('[data-act="move"]')) return;
+    moveSession(el.getAttribute("data-sid"), el.value);
+  });
+
+  /* ---------------- drag a session to another slot ---------------- */
+
+  var dragId = null;
+  var hinted = null;
+
+  function upTo(node, sel) {
+    var el = node && node.nodeType === 1 ? node : (node && node.parentElement);
+    return el ? el.closest(sel) : null;
+  }
+
+  function hint(section) {
+    if (hinted === section) return;
+    if (hinted) hinted.classList.remove("droptarget");
+    hinted = section;
+    if (hinted) hinted.classList.add("droptarget");
+  }
+
+  document.addEventListener("dragstart", function (ev) {
+    var grip = upTo(ev.target, "[data-grip]");
+    if (!grip) return;
+    dragId = grip.getAttribute("data-sid");
+    var card = grip.closest(".card");
+    if (ev.dataTransfer) {
+      ev.dataTransfer.effectAllowed = "move";
+      try { ev.dataTransfer.setData("text/plain", dragId); } catch (e) { /* older browsers */ }
+      if (card) { try { ev.dataTransfer.setDragImage(card, 20, 20); } catch (e) { /* ignore */ } }
+    }
+    if (card) card.classList.add("dragging");
+  });
+
+  document.addEventListener("dragend", function () {
+    dragId = null;
+    hint(null);
+    var stale = document.querySelector(".card.dragging");
+    if (stale) stale.classList.remove("dragging");
+  });
+
+  document.addEventListener("dragover", function (ev) {
+    if (!dragId) return;
+    var section = upTo(ev.target, "[data-dropslot]");
+    if (!section) { hint(null); return; }
+    ev.preventDefault();
+    if (ev.dataTransfer) ev.dataTransfer.dropEffect = "move";
+    hint(section);
+  });
+
+  document.addEventListener("drop", function (ev) {
+    if (!dragId) return;
+    var section = upTo(ev.target, "[data-dropslot]");
+    var id = dragId;
+    dragId = null;
+    hint(null);
+    if (!section) return;
+    ev.preventDefault();
+    moveSession(id, section.getAttribute("data-dropslot"));
+  });
+
+  document.addEventListener("input", function (ev) {
+    var el = ev.target;
+    if (!el.matches || !el.matches('[data-act="topic"]')) return;
+    var sid = el.getAttribute("data-sid");
+    drafts[sid] = el.value;
+    autosize(el);
+    queueTopicSave(sid);
+  });
+
+  document.addEventListener("focusout", function (ev) {
+    var el = ev.target;
+    if (!el.matches || !el.matches('[data-act="topic"]')) return;
+    var sid = el.getAttribute("data-sid");
+    saveTopic(sid);
+    delete drafts[sid];
+  });
+
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter" && ev.target.matches && ev.target.matches('[data-act="topic"]')) {
+      ev.preventDefault();
+      ev.target.blur();
+    }
+  });
+
+  /* ---------------- boot ---------------- */
+
+  render();
+
+  (window.claude && window.claude.use ? window.claude.use("db") : Promise.resolve(null))
+    .then(function (store) {
+      if (!store) {
+        db = null;
+        mode = "local";
+        render();
+        return;
+      }
+      db = store;
+      mode = "shared";
+      db.collection("sessions").onSnapshot(function (snap) {
+        var next = [];
+        snap.docs.forEach(function (d) {
+          var data = d.data() || {};
+          if (!SLOT[data.slot]) return;
+          next.push({
+            id: d.id,
+            topic: typeof data.topic === "string" ? data.topic : "",
+            slot: data.slot,
+            people: Array.isArray(data.people) ? data.people.filter(function (x) { return typeof x === "string" && PERSON[x]; }) : [],
+            example: data.example === true,
+            createdAt: typeof data.createdAt === "string" ? data.createdAt : ""
+          });
+        });
+        sessions = sortSessions(next);
+        render();
+      }, function (e) {
+        mode = "local";
+        db = null;
+        render();
+        toast(e && e.code === "revoked" ? "You can look but not change this board." : "Lost the connection. Reload to pick it back up.");
+      });
+    })
+    .catch(function () {
+      db = null;
+      mode = "local";
+      render();
+    });
+})();
+</script>

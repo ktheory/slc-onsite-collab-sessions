@@ -1,0 +1,58 @@
+{
+  "_comment": "Session data exported from the prototype's store on 2026-09-21. The three 'example: true' rows are placeholders, not real plans. The empty untitled session was created by a click in the live page.",
+  "people": [
+    { "id": "aaron.suggs", "name": "Aaron Suggs", "email": "aaron.suggs@instructure.com" },
+    { "id": "ahmad", "name": "Ahmad", "email": "ahmad@instructure.com" },
+    { "id": "ciara.montes", "name": "Ciara Montes", "email": "ciara.montes@instructure.com" },
+    { "id": "dnehring", "name": "Daniel Nehring", "email": "dnehring@instructure.com" },
+    { "id": "emily.stupar", "name": "Emily Stupar", "email": "emily.stupar@instructure.com" },
+    { "id": "jackson.howe", "name": "Jackson Howe", "email": "jackson.howe@instructure.com" },
+    { "id": "jenny.thai", "name": "Jenny Thai", "email": "jenny.thai@instructure.com" },
+    { "id": "kqiu", "name": "kqiu", "email": "kqiu@instructure.com" },
+    { "id": "kyle.cayemittes", "name": "Kyle Cayemittes", "email": "kyle.cayemittes@instructure.com" },
+    { "id": "michelle.trame", "name": "Michelle Trame", "email": "michelle.trame@instructure.com" },
+    { "id": "ryan.dontas", "name": "Ryan Dontas", "email": "ryan.dontas@instructure.com" },
+    { "id": "terran.jendro", "name": "Terran Jendro", "email": "terran.jendro@instructure.com" }
+  ],
+  "slots": [
+    { "id": "s1", "day": "Tuesday", "time": "2:15 PM" },
+    { "id": "s2", "day": "Wednesday", "time": "9:45 AM" },
+    { "id": "s3", "day": "Wednesday", "time": "2:00 PM" },
+    { "id": "s4", "day": "Wednesday", "time": "3:30 PM" },
+    { "id": "s5", "day": "Thursday", "time": "1:00 PM" }
+  ],
+  "sessions": [
+    {
+      "id": "ex1",
+      "topic": "Retro on the last release",
+      "slot": "s1",
+      "people": ["aaron.suggs", "dnehring", "jenny.thai", "kyle.cayemittes"],
+      "example": true,
+      "createdAt": "2026-09-21T17:00:00Z"
+    },
+    {
+      "id": "ex3",
+      "topic": "Flaky tests: what do we actually do",
+      "slot": "s2",
+      "people": ["ahmad", "jackson.howe", "ryan.dontas"],
+      "example": true,
+      "createdAt": "2026-09-21T17:02:00Z"
+    },
+    {
+      "id": "ex2",
+      "topic": "Cleaning up the onboarding docs",
+      "slot": "s3",
+      "people": ["ciara.montes", "emily.stupar", "michelle.trame"],
+      "example": true,
+      "createdAt": "2026-09-21T17:01:00Z"
+    },
+    {
+      "id": "smubvrzc181wcs",
+      "topic": "",
+      "slot": "s1",
+      "people": [],
+      "example": false,
+      "createdAt": "2026-09-21T23:33:01.729Z"
+    }
+  ]
+}
