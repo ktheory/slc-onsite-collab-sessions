@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect x=%221%22 y=%221%22 width=%226%22 height=%226%22 rx=%221.5%22 fill=%22%231c6b63%22/%3E%3Crect x=%229%22 y=%221%22 width=%226%22 height=%226%22 rx=%221.5%22 fill=%22%231c6b63%22/%3E%3Crect x=%221%22 y=%229%22 width=%226%22 height=%226%22 rx=%221.5%22 fill=%22%231c6b63%22/%3E%3C/svg%3E">
+<title>On-Site Breakout Board</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div>
+      <p class="kicker">Team on-site</p>
+      <h1>Breakout sessions</h1>
+    </div>
+    <div class="viewswitch" role="group" aria-label="View">
+      <button type="button" id="view-slots" data-act="view" data-view="slots" aria-pressed="true">By slot</button>
+      <button type="button" id="view-people" data-act="view" data-view="people" aria-pressed="false">By person</button>
+    </div>
+  </header>
+
+  <div id="status"></div>
+  <main id="app"><p class="empty-note" style="padding-block:28px">Loading the schedule…</p></main>
+
+  <p class="footnote">
+    Drag a session by the handle in its corner to move it to another slot, or pick the slot
+    from the menu at the bottom of the card. Everyone with the link can add sessions and move
+    people around, and changes show up for whoever else has the page open. Try not to put anyone
+    in two sessions in the same slot — the roster tells you where people already are, anyone who
+    would clash comes off a session when you move it, and anyone double-booked is flagged so you
+    can sort it out.
+  </p>
+</div>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

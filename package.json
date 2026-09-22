@@ -1,0 +1,16 @@
+{
+  "name": "breakout-board",
+  "private": true,
+  "workspaces": ["shared", "backend", "web", "infra"],
+  "scripts": {
+    "build": "npm run build -w web",
+    "typecheck": "tsc -p shared && tsc -p backend && tsc -p web && tsc -p infra",
+    "test": "npm test -w backend -w web",
+    "dev:db": "docker run --rm -p 8000:8000 amazon/dynamodb-local -jar DynamoDBLocal.jar -inMemory -sharedDb",
+    "dev:server": "npm run dev -w backend",
+    "dev:web": "npm run dev -w web",
+    "bootstrap": "npm run build && npm run bootstrap -w infra",
+    "synth": "npm run build && npm run synth -w infra",
+    "deploy": "npm run build && npm run deploy -w infra"
+  }
+}
