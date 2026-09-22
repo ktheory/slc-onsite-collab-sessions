@@ -1,0 +1,24 @@
+{
+  "name": "@board/infra",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "synth": "cdk synth",
+    "deploy": "cdk deploy",
+    "diff": "cdk diff",
+    "link": "tsx bin/link.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "aws-cdk": "^2.1142.0",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudformation": "^3.1137.0",
+    "@aws-sdk/client-secrets-manager": "^3.1137.0",
+    "aws-cdk-lib": "^2.270.0",
+    "constructs": "^10.8.1"
+  }
+}
