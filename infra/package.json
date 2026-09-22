@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "bootstrap": "cdk bootstrap",
     "synth": "cdk synth",
     "deploy": "cdk deploy",
     "diff": "cdk diff",
