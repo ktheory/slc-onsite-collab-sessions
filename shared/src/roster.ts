@@ -24,7 +24,7 @@ export const PEOPLE: readonly Person[] = [
   { id: "emily.stupar", name: "Emily Stupar", short: "Emily" },
   { id: "jackson.howe", name: "Jackson Howe", short: "Jackson" },
   { id: "jenny.thai", name: "Jenny Thai", short: "Jenny" },
-  { id: "kqiu", name: "kqiu", short: "kqiu" }, // real display name still unknown
+  { id: "kqiu", name: "Kevin", short: "Kevin" },
   { id: "kyle.cayemittes", name: "Kyle Cayemittes", short: "Kyle" },
   { id: "michelle.trame", name: "Michelle Trame", short: "Michelle" },
   { id: "ryan.dontas", name: "Ryan Dontas", short: "Ryan" },

@@ -35,7 +35,7 @@ dnehring          Daniel Nehring
 emily.stupar      Emily Stupar
 jackson.howe      Jackson Howe
 jenny.thai        Jenny Thai
-kqiu              kqiu            <- real display name still unknown
+kqiu              Kevin
 kyle.cayemittes   Kyle Cayemittes
 michelle.trame    Michelle Trame
 ryan.dontas       Ryan Dontas
