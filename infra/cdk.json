@@ -3,7 +3,7 @@
   "watch": { "include": ["bin/**", "lib/**", "../backend/src/**", "../shared/src/**"] },
   "context": {
     "domainName": "slc.sug.gs",
-    "certificateArn": "",
+    "certificateArn": "arn:aws:acm:us-east-1:066179286965:certificate/8eb55a74-26de-4662-9d51-ab65bc1ff3f1",
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
     "@aws-cdk/core:target-partitions": ["aws"]
   }
