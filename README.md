@@ -10,7 +10,7 @@ behavior; `prototype.html` is the original single-file artifact it was ported fr
 | `shared/` | Roster, slots, wire protocol, clash detection. Used by both sides. |
 | `backend/` | DynamoDB storage (`repo.ts`), message handling (`handler.ts`), the Lambda entry (`lambda.ts`) and a local WebSocket dev server. |
 | `web/` | The page: Vite + TypeScript, no framework. `store.ts` reconciles optimistic edits with server pushes; `socket.ts` is the connection. |
-| `infra/` | CDK stack: DynamoDB, API Gateway WebSocket API + Lambda, S3 + CloudFront, a Secrets Manager board key. |
+| `infra/` | CDK stack: DynamoDB, API Gateway WebSocket API + Lambda, S3 + CloudFront on a custom domain. |
 
 ## How it works
 
@@ -34,9 +34,8 @@ behavior; `prototype.html` is the original single-file artifact it was ported fr
 - **Storage.** One table. Sessions are `pk=SESSIONS, sk=<id>` with `people` as a
   string set, so concurrent adds and removes are single atomic `ADD`/`DELETE`
   updates and never lose each other. Open connections are `pk=CONNS` with a TTL.
-- **Access.** Anyone with the link can edit. The link carries a key in its
-  `#fragment`; the WebSocket `$connect` route checks it against Secrets Manager.
-  There's no per-person identity yet.
+- **Access.** None: anyone who can load the page can edit the board, and changes
+  don't record who made them.
 
 ## Local development
 
@@ -56,7 +55,22 @@ Run these from the repo root; raw `cdk` commands need to run inside `infra/`.
 ```sh
 npm run bootstrap    # once per account and region
 npm run deploy       # builds web/, then cdk deploy
-npm run link         # prints the shareable link, key included
 ```
 
 The table is retained if the stack is deleted.
+
+### Custom domain
+
+The page is served at `slc.sug.gs`, set as `domainName` in `infra/cdk.json`. DNS is
+in Cloudflare, so there's no Route 53. One-time setup:
+
+1. In ACM **in us-east-1** (CloudFront only accepts certificates there), request a
+   public certificate for `slc.sug.gs` with DNS validation. Add the validation
+   CNAME it shows in Cloudflare, DNS only (grey cloud).
+2. Once it's issued, put its ARN in `certificateArn` in `infra/cdk.json` and run
+   `npm run deploy`.
+3. In Cloudflare, add a CNAME `slc` → the `CloudFrontDomain` stack output,
+   DNS only.
+
+Without a `certificateArn` the deploy still works, with a warning, and the board
+is only at its CloudFront URL (the `SiteUrl` output).

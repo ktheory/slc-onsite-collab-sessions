@@ -13,7 +13,6 @@ import { ensureTable } from "./table.ts";
 
 const PORT = Number(process.env.PORT ?? 8787);
 const TABLE = process.env.TABLE_NAME ?? "breakout-board-dev";
-const KEY = process.env.BOARD_KEY; // optional; mirrors the deployed $connect check
 
 const client = new DynamoDBClient({
   endpoint: process.env.DYNAMODB_ENDPOINT ?? "http://localhost:8000",
@@ -41,9 +40,7 @@ const deps: Deps = {
 };
 
 const wss = new WebSocketServer({ port: PORT });
-wss.on("connection", (ws, req) => {
-  const key = new URL(req.url ?? "/", "http://x").searchParams.get("key");
-  if (KEY && key !== KEY) return ws.close(4401, "Missing or wrong board key.");
+wss.on("connection", (ws) => {
   const id = randomUUID();
   sockets.set(id, ws);
   ws.on("message", (data) => void handleMessage(deps, id, data.toString()).catch((e) => console.error(e)));

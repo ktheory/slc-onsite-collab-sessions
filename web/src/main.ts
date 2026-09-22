@@ -20,8 +20,6 @@ const board = new Board();
 let link: Link;
 let linkState: LinkState = "connecting";
 let loaded = false; // first snapshot arrived
-let everOpened = false;
-let missingKey = false; // deployed board wants a key and the link has none
 let view: "slots" | "people" = "slots";
 let openPicker: string | null = null;
 let pendingDelete: string | null = null;
@@ -167,18 +165,13 @@ function deleteSession(sid: string): void {
 function renderStatus(): void {
   let h = "";
   if (linkState === "offline") {
-    if (!everOpened && missingKey) {
-      h += '<div class="notice">This link is missing its access key. Open the board from the link you were sent.</div>';
-    } else {
-      const n = link.unsaved;
-      h +=
-        '<div class="notice offline">Can’t reach the board right now; reconnecting. ' +
-        (n
-          ? `${n} change${n === 1 ? "" : "s"} will save when the connection is back.`
-          : "You can keep working; changes will save when the connection is back.") +
-        (everOpened ? "" : " If this keeps up, reopen the board from the link you were sent.") +
-        "</div>";
-    }
+    const n = link.unsaved;
+    h +=
+      '<div class="notice offline">Can’t reach the board right now; reconnecting. ' +
+      (n
+        ? `${n} change${n === 1 ? "" : "s"} will save when the connection is back.`
+        : "You can keep working; changes will save when the connection is back.") +
+      "</div>";
   }
   statusEl.innerHTML = h;
 }
@@ -508,46 +501,24 @@ document.addEventListener("drop", (ev) => {
 
 /* ---------------- boot ---------------- */
 
-/** The board key travels in the link's #fragment, so it never reaches server logs. */
-function boardKey(): string | null {
-  const fromHash = new URLSearchParams(location.hash.slice(1)).get("key");
-  try {
-    if (fromHash) localStorage.setItem("board-key", fromHash);
-    else {
-      const saved = localStorage.getItem("board-key");
-      if (saved) history.replaceState(null, "", `#key=${encodeURIComponent(saved)}`);
-      return saved;
-    }
-  } catch {
-    /* storage blocked; the fragment still works */
-  }
-  return fromHash;
-}
-
 /** Written next to the page at deploy time. Missing in local development. */
-async function loadConfig(): Promise<{ wsUrl: string; requiresKey: boolean }> {
+async function loadConfig(): Promise<{ wsUrl: string }> {
   try {
     const res = await fetch("config.json", { cache: "no-store" });
     const cfg = await res.json();
-    if (typeof cfg.wsUrl === "string") return { wsUrl: cfg.wsUrl, requiresKey: cfg.requiresKey === true };
+    if (typeof cfg.wsUrl === "string") return { wsUrl: cfg.wsUrl };
   } catch {
     /* no config: local development */
   }
-  return { wsUrl: `ws://${location.hostname}:8787`, requiresKey: false };
+  return { wsUrl: `ws://${location.hostname}:8787` };
 }
 
 async function boot(): Promise<void> {
   render();
-  const key = boardKey();
-  const config = await loadConfig();
-  missingKey = config.requiresKey && !key;
-  const url = new URL(config.wsUrl);
-  if (key) url.searchParams.set("key", key);
-
-  link = new Link(url.toString(), {
+  const { wsUrl } = await loadConfig();
+  link = new Link(wsUrl, {
     onState(state) {
       linkState = state;
-      if (state === "open") everOpened = true;
       render();
     },
     onPush(msg) {

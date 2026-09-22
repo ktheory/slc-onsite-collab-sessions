@@ -1,6 +1,7 @@
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { CfnOutput, Duration, RemovalPolicy, Stack, type StackProps } from "aws-cdk-lib";
+import { Annotations, CfnOutput, Duration, RemovalPolicy, Stack, Token, type StackProps } from "aws-cdk-lib";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import { WebSocketApi, WebSocketStage } from "aws-cdk-lib/aws-apigatewayv2";
 import { WebSocketLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
@@ -11,18 +12,30 @@ import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
-import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import type { Construct } from "constructs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
+export interface BoardStackProps extends StackProps {
+  /**
+   * Custom domain for the page, e.g. slc.sug.gs. DNS lives outside AWS: point a
+   * CNAME at the `CloudFrontDomain` output.
+   */
+  domainName?: string;
+  /** ACM certificate for `domainName`. CloudFront only accepts certificates in us-east-1. */
+  certificateArn?: string;
+}
+
 /**
  * The breakout board: a static page on CloudFront, a WebSocket API that pushes
  * every change to every open page, and one DynamoDB table behind it.
+ *
+ * There is no access control: anyone who can load the page can edit the board.
  */
 export class BoardStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props: BoardStackProps = {}) {
     super(scope, id, props);
+    const domain = this.customDomain(props);
 
     // Sessions and open connections. Kept on stack deletion: the schedule is the point.
     const table = new dynamodb.TableV2(this, "Table", {
@@ -34,12 +47,6 @@ export class BoardStack extends Stack {
       removalPolicy: RemovalPolicy.RETAIN,
     });
 
-    // Anyone with the link can edit; the link carries this key. Stands in for the
-    // artifact sharing the prototype relied on.
-    const boardKey = new secretsmanager.Secret(this, "BoardKey", {
-      description: "Access key embedded in the breakout board link",
-      generateSecretString: { passwordLength: 32, excludePunctuation: true },
-    });
 
     const fn = new NodejsFunction(this, "Socket", {
       entry: path.join(root, "backend/src/lambda.ts"),
@@ -52,12 +59,10 @@ export class BoardStack extends Stack {
       logGroup: new LogGroup(this, "SocketLogs", { retention: RetentionDays.ONE_MONTH, removalPolicy: RemovalPolicy.DESTROY }),
       environment: {
         TABLE_NAME: table.tableName,
-        BOARD_KEY_SECRET_ARN: boardKey.secretArn,
       },
       bundling: { minify: true, sourceMap: true, target: "node22" },
     });
     table.grantReadWriteData(fn);
-    boardKey.grantRead(fn);
 
     const integration = (name: string) => ({ integration: new WebSocketLambdaIntegration(`${name}Integration`, fn) });
     const api = new WebSocketApi(this, "Api", {
@@ -80,6 +85,10 @@ export class BoardStack extends Stack {
       autoDeleteObjects: true,
     });
     const cdn = new cloudfront.Distribution(this, "Cdn", {
+      ...(domain && {
+        domainNames: [domain.name],
+        certificate: acm.Certificate.fromCertificateArn(this, "Certificate", domain.certificateArn),
+      }),
       defaultRootObject: "index.html",
       defaultBehavior: {
         origin: S3BucketOrigin.withOriginAccessControl(site),
@@ -91,13 +100,33 @@ export class BoardStack extends Stack {
       distribution: cdn,
       sources: [
         Source.asset(path.join(root, "web/dist")),
-        Source.jsonData("config.json", { wsUrl: stage.url, requiresKey: true }),
+        Source.jsonData("config.json", { wsUrl: stage.url }),
       ],
     });
 
-    new CfnOutput(this, "SiteUrl", { value: `https://${cdn.distributionDomainName}` });
+    new CfnOutput(this, "SiteUrl", { value: `https://${domain?.name ?? cdn.distributionDomainName}` });
+    new CfnOutput(this, "CloudFrontDomain", {
+      value: cdn.distributionDomainName,
+      description: "CNAME target for the custom domain",
+    });
     new CfnOutput(this, "SocketUrl", { value: stage.url });
-    new CfnOutput(this, "BoardKeySecretArn", { value: boardKey.secretArn });
     new CfnOutput(this, "TableName", { value: table.tableName });
+  }
+
+  /** The custom domain, if one is configured and has a usable certificate. */
+  private customDomain(props: BoardStackProps): { name: string; certificateArn: string } | undefined {
+    const { domainName: name, certificateArn } = props;
+    if (!name) return undefined;
+    if (!certificateArn) {
+      Annotations.of(this).addWarning(
+        `No certificateArn for ${name}, so the board is only at its CloudFront URL. ` +
+          "Request a certificate in ACM in us-east-1 and set certificateArn in infra/cdk.json.",
+      );
+      return undefined;
+    }
+    if (!Token.isUnresolved(certificateArn) && certificateArn.split(":")[3] !== "us-east-1") {
+      throw new Error(`CloudFront needs its certificate in us-east-1; ${certificateArn} is not.`);
+    }
+    return { name, certificateArn };
   }
 }
