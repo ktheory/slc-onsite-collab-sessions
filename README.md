@@ -50,7 +50,8 @@ npm test             # needs dev:db running
 
 ## Deploy
 
-Needs AWS credentials and a bootstrapped account (`npx cdk bootstrap`).
+Deploys to `us-east-2` (set `BOARD_REGION` to override). Needs AWS credentials and
+a bootstrapped account/region (`npx cdk bootstrap aws://<account>/us-east-2`).
 
 ```sh
 npm run deploy       # builds web/, then cdk deploy
